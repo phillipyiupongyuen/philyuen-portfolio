@@ -1,211 +1,171 @@
 'use client';
 
-import { useState } from 'react';
-import Header from '../../components/Header';
+import Link from 'next/link';
+import WarmNav from '../../components/WarmNav';
+import { useScreeningTool } from '../../lib/useScreeningTool';
+
+const serif = { fontFamily: 'var(--font-newsreader), serif' };
+
+const howItWorks = [
+  { n: '1', title: 'Paste the question', body: 'Any screening question, from any application.' },
+  { n: '2', title: 'Add context — optional', body: 'A line of relevant experience sharpens the drafts.' },
+  { n: '3', title: 'Pick, refine, send', body: 'Two angles to choose from. Judgment stays human.' },
+];
+
+const whyBuilt = [
+  { n: '01', text: 'How I spot toil and build systems to remove it' },
+  { n: '02', text: 'That I can integrate the Claude API into a working product' },
+  { n: '03', text: 'Where I draw the line — AI drafts, humans decide' },
+];
 
 export default function ScreeningResponseGen() {
-  const [question, setQuestion] = useState('');
-  const [context, setContext] = useState('');
-  const [responses, setResponses] = useState<string[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleGenerate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    setResponses([]);
-
-    try {
-      const res = await fetch('/api/generate-response', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question, context }),
-      });
-
-      if (!res.ok) {
-        throw new Error('Failed to generate response');
-      }
-
-      const data = await res.json();
-      setResponses(data.responses);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { questionBank, selected, pick, context, setContext, status, drafts, error, generate, currentQuestion } =
+    useScreeningTool();
+  const idle = status === 'idle';
+  const loading = status === 'loading';
+  const done = status === 'done';
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
+    <div className="min-h-screen bg-[#faf7f2] text-[#211a13]">
+      <WarmNav active="tool" />
 
-      <section className="max-w-4xl mx-auto px-6 py-20">
-        <h1 className="text-4xl font-semibold text-gray-900 mb-4">
+      <div className="px-6 pb-10 pt-16 text-center md:px-16 md:pt-20">
+        <div className="mb-4.5 text-[13px] font-semibold uppercase tracking-wide text-[#c2410c]">
+          A working demo — not a shortcut
+        </div>
+        <h1 className="mb-4.5 text-[40px] font-medium tracking-tight md:text-[56px]" style={serif}>
           Screening Response Generator
         </h1>
-        <p className="text-lg text-gray-600 mb-12">
-          Paste a screening question from a job application. Get 2-3 tailored response options powered by Claude.
+        <p className="mx-auto max-w-2xl text-lg leading-relaxed text-[#5d554b] md:text-xl">
+          Paste a screening question from any job application. Claude drafts two tailored angles from my real
+          experience — then I pick, refine, and send. The judgment stays human.
         </p>
+      </div>
 
-        <div className="bg-gray-50 p-8 rounded-lg mb-8">
-          <form onSubmit={handleGenerate} className="space-y-6">
-            {/* Question Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Screening Question
-              </label>
-              <textarea
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                placeholder="Paste the screening question here (e.g., 'Tell us about a time you shipped a product under pressure...')"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
-                rows={4}
-                required
-              />
-            </div>
-
-            {/* Context Input */}
-            <div>
-              <label className="block text-sm font-medium text-gray-900 mb-2">
-                Your Relevant Experience (optional)
-              </label>
-              <textarea
-                value={context}
-                onChange={(e) => setContext(e.target.value)}
-                placeholder="e.g., 'Built StrongRoom AI platform from zero to $1.5M ARR in 18 months, managing 500% user growth while maintaining clinical safety standards...'"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent resize-none"
-                rows={4}
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full px-6 py-3 bg-accent text-white font-medium rounded-lg hover:bg-accent-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? 'Generating...' : 'Generate Responses'}
-            </button>
-          </form>
-        </div>
-
-        {/* Error State */}
-        {error && (
-          <div className="p-4 mb-8 bg-red-50 border border-red-200 rounded-lg text-red-900">
-            {error}
-          </div>
-        )}
-
-        {/* Responses */}
-        {responses.length > 0 && (
-          <div className="space-y-6">
-            <h2 className="text-2xl font-semibold text-gray-900">Generated Responses</h2>
-            {responses.map((response, idx) => (
-              <div
-                key={idx}
-                className="p-6 border border-gray-200 rounded-lg hover:border-accent transition-colors"
+      <div className="grid gap-6 px-6 pb-16 pt-6 md:grid-cols-2 md:px-16 md:pb-20">
+        {/* Input card */}
+        <div className="rounded-2xl border border-[#e8e1d6] bg-white p-8">
+          <div className="mb-3.5 text-xs font-bold uppercase tracking-wide text-[#8a8177]">Screening question</div>
+          <div className="mb-4 flex flex-wrap gap-2.5">
+            {questionBank.map((q, i) => (
+              <button
+                key={q.short}
+                onClick={() => pick(i)}
+                className={`rounded-full border-[1.5px] px-3.5 py-2 text-[13px] font-semibold ${
+                  i === selected ? 'border-[#211a13] bg-[#211a13] text-white' : 'border-[#d8d0c3] bg-white text-[#5d554b]'
+                }`}
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="font-medium text-gray-900">Option {idx + 1}</h3>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText(response);
-                      alert('Copied to clipboard!');
-                    }}
-                    className="text-sm text-accent hover:text-accent-dark transition-colors"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {response}
-                </p>
-              </div>
+                {q.short}
+              </button>
             ))}
           </div>
-        )}
-
-        {/* Placeholder for first-time users */}
-        {!loading && responses.length === 0 && !error && (
-          <div className="p-12 bg-gray-50 rounded-lg text-center">
-            <svg
-              className="w-12 h-12 mx-auto mb-4 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <p className="text-gray-600">
-              Enter a screening question above to get started.
-            </p>
+          <div className="mb-5 min-h-[72px] rounded-xl border border-[#e8e1d6] bg-[#faf7f2] px-5 py-4.5 text-base leading-snug">
+            {currentQuestion.full}
           </div>
-        )}
-      </section>
-
-      {/* How It Works */}
-      <section className="max-w-4xl mx-auto px-6 py-20 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-8">How It Works</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="space-y-3">
-            <div className="w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center font-bold text-sm">
-              1
-            </div>
-            <h3 className="font-semibold text-gray-900">Paste the Question</h3>
-            <p className="text-sm text-gray-600">
-              Copy-paste any screening question from a job application.
-            </p>
+          <div className="mb-2.5 text-xs font-bold uppercase tracking-wide text-[#8a8177]">
+            Relevant experience <span className="normal-case tracking-normal text-[#bfb6a9]">(optional)</span>
           </div>
-          <div className="space-y-3">
-            <div className="w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center font-bold text-sm">
-              2
-            </div>
-            <h3 className="font-semibold text-gray-900">Add Context (Optional)</h3>
-            <p className="text-sm text-gray-600">
-              Share relevant experience to get more tailored responses.
-            </p>
-          </div>
-          <div className="space-y-3">
-            <div className="w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center font-bold text-sm">
-              3
-            </div>
-            <h3 className="font-semibold text-gray-900">Pick & Copy</h3>
-            <p className="text-sm text-gray-600">
-              Choose your favorite response and copy it to your application.
-            </p>
-          </div>
+          <textarea
+            rows={2}
+            value={context}
+            onChange={(e) => setContext(e.target.value)}
+            placeholder="e.g. Led a data platform build at a national wholesaler…"
+            className="mb-5 w-full resize-y rounded-lg border border-[#d8d0c3] bg-[#faf7f2] px-4 py-3.5 text-[15px] text-[#211a13] outline-none"
+          />
+          <button
+            onClick={generate}
+            className="w-full rounded-lg bg-[#c2410c] py-3.5 text-base font-semibold text-white"
+          >
+            {done ? 'Regenerate ↻' : 'Generate responses ✨'}
+          </button>
         </div>
-      </section>
 
-      {/* Why I Built This */}
-      <section className="max-w-4xl mx-auto px-6 py-20 border-t border-gray-200">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-6">Why I Built This</h2>
-        <p className="text-gray-600 mb-4">
-          I've applied to 50+ senior PM and lead PM roles since June 2026. For each application, I need to tailor screening responses to the specific role, company, and culture. Doing this manually is tedious and repetitive.
+        {/* Output panel */}
+        <div className="flex min-h-[420px] flex-col gap-4">
+          {idle && (
+            <div className="flex flex-1 flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#d8d0c3] p-12 text-center">
+              <span className="text-4xl text-[#d8d0c3]" style={serif}>
+                ✎
+              </span>
+              <div className="max-w-[300px] text-base text-[#8a8177]">
+                Your drafted options will appear here. Pick a question and hit generate.
+              </div>
+            </div>
+          )}
+          {loading && (
+            <div className="flex flex-1 items-center justify-center gap-3.5 rounded-2xl border border-[#e8e1d6] bg-white text-base text-[#8a8177]">
+              <span className="h-5 w-5 flex-none animate-spin rounded-full border-2 border-[#e8d5c8] border-t-[#c2410c]" />
+              Drafting from real experience…
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="flex flex-1 items-center justify-center rounded-2xl border border-[#e8e1d6] bg-white p-8 text-center text-[#9a3412]">
+              {error}
+            </div>
+          )}
+          {done && (
+            <div className="flex animate-[srg-in_0.4s_ease] flex-col gap-4">
+              {drafts.map((d) => (
+                <div key={d.angle} className="rounded-2xl border border-[#e8e1d6] bg-white p-7">
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-wide text-[#c2410c]">{d.angle}</span>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(d.text)}
+                      className="rounded-full border-[1.5px] border-[#d8d0c3] px-3.5 py-1.5 text-[13px] font-semibold text-[#5d554b]"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <div className="text-[15px] leading-relaxed text-[#3d362d]">{d.text}</div>
+                </div>
+              ))}
+              <div className="rounded-xl bg-[#f3ede3] px-4.5 py-3.5 text-sm text-[#5d554b]">
+                <strong className="text-[#c2410c]">Final step is human:</strong> I pick the angle, sharpen it, and
+                verify every claim before it&apos;s sent.
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* How it works */}
+      <div className="grid gap-6 border-t border-[#e8e1d6] px-6 py-14 md:grid-cols-3 md:px-16">
+        {howItWorks.map((s) => (
+          <div key={s.n}>
+            <div className="mb-2 text-3xl text-[#c2410c]" style={serif}>
+              {s.n}
+            </div>
+            <div className="mb-1.5 text-base font-bold">{s.title}</div>
+            <div className="text-[15px] leading-snug text-[#5d554b]">{s.body}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Why I built this */}
+      <div className="bg-[#211a13] px-6 py-16 text-[#faf7f2] md:px-16">
+        <h2 className="mb-4 text-[28px] font-medium md:text-[34px]" style={serif}>
+          Why I built this
+        </h2>
+        <p className="mb-6 max-w-2xl text-lg leading-relaxed text-[#cfc5b8]">
+          Tailoring screening responses is repetitive work with a quality bar. That&apos;s exactly the kind of problem
+          a PM should automate. This tool shows three things in one artifact:
         </p>
-        <p className="text-gray-600 mb-4">
-          This tool lets me generate 2-3 tailored options in seconds, pick the best one, and iterate. It's a real workflow I use, and it demonstrates:
-        </p>
-        <ul className="space-y-2 text-gray-600 list-disc list-inside mb-4">
-          <li>
-            How I think about automation and tooling (a core PM skill)
-          </li>
-          <li>
-            That I can integrate Claude API into products
-          </li>
-          <li>
-            Understanding of hiring workflows and what hiring managers care about
-          </li>
-        </ul>
-        <p className="text-gray-600">
-          Check out the <a href="/claude-code" className="text-accent hover:text-accent-dark font-medium">Claude Code case study</a> to see how I scaled this across my entire job search.
-        </p>
-      </section>
+        <div className="flex max-w-2xl flex-col gap-2.5">
+          {whyBuilt.map((item) => (
+            <div key={item.n} className="flex gap-3 text-base text-[#ece5da]">
+              <span className="font-bold text-[#e8956d]">{item.n}</span> {item.text}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="flex flex-col gap-3 border-t border-[#e8e1d6] px-6 py-6.5 text-sm text-[#8a8177] md:flex-row md:items-center md:justify-between md:px-16">
+        <Link href="/" className="hover:text-[#211a13]">
+          ← Back to home
+        </Link>
+        <span>Phil Yuen · Melbourne, VIC</span>
+      </footer>
     </div>
   );
 }
