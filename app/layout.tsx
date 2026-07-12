@@ -1,10 +1,17 @@
 import type { Metadata } from 'next';
-import { Newsreader } from 'next/font/google';
+import { Archivo, Newsreader } from 'next/font/google';
 import './globals.css';
 
 const newsreader = Newsreader({
   subsets: ['latin'],
+  style: ['normal', 'italic'],
   variable: '--font-newsreader',
+  display: 'swap',
+});
+
+const archivo = Archivo({
+  subsets: ['latin'],
+  variable: '--font-archivo',
   display: 'swap',
 });
 
@@ -44,7 +51,7 @@ export default function RootLayout({
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={`antialiased ${newsreader.variable}`}>
+      <body className={`antialiased ${newsreader.variable} ${archivo.variable}`}>
         {children}
       </body>
     </html>
