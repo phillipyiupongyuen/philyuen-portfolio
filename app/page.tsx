@@ -1,437 +1,318 @@
-'use client';
-
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import WarmNav from './components/WarmNav';
-import { useScreeningTool } from './lib/useScreeningTool';
 
 const serif = { fontFamily: 'var(--font-newsreader), serif' };
 
-const stats = [
-  { value: '8+ yrs', label: 'Product leadership' },
-  { value: '$1.5M', label: 'ARR built' },
-  { value: '500%', label: 'Growth in 6 months' },
-  { value: '$5M', label: 'Contracts secured' },
-];
-
-const jobs = [
+const works = [
   {
-    company: 'countfor.me',
+    num: '07',
     href: '/projects/countfor-me',
+    headline: 'Founding a hospo-fintech app for the Aussie & Japanese market.',
+    company: 'countfor.me',
     role: 'Co-Founder & Product Lead',
-    dates: '2026 – Present',
-    context: 'Hospitality fintech entering the Japanese market.',
+    years: '2026 –',
     award: false,
-    outcomes: [
-      'Own end-to-end product and commercial strategy for market entry.',
-      'Built and lead a team of 8 university-funded volunteer interns.',
-      'Running tight build–measure–learn loops with early users.',
-    ],
-    differently: "Too early to say — I'm in the trenches now. Ask me in a year.",
   },
   {
-    company: 'Sigma Healthcare',
+    num: '06',
     href: '/projects/sigma-healthcare',
-    role: 'Senior Data Platform Product Manager',
-    dates: '2025 – 2026',
-    context: 'National pharmacy wholesaler modernising its data estate.',
+    headline: 'Shipped a national Snowflake data platform during a merger',
+    company: 'Sigma Healthcare/Chemist Warehouse',
+    role: 'Senior Data Platform PM',
+    years: '2025 – 26',
     award: false,
-    outcomes: [
-      'Shipped a national Snowflake platform — Medallion architecture with dbt, Fivetran and Airflow.',
-      'Owned the roadmap across Commercial, Finance and Supply Chain domains.',
-      'Established governance and trust frameworks now steering national supply-chain decisions.',
-    ],
-    differently: 'Bring business domain owners into the data modelling process earlier.',
   },
   {
-    company: 'StrongRoom AI',
+    num: '05',
+    href: '/projects/revision3',
+    headline: 'Lifted retention 25% and DAU 30% in multiple regions',
+    company: 'Revision3 (SBX)',
+    role: 'Product Manager',
+    years: '2024 – 25',
+    award: false,
+  },
+  {
+    num: '04',
+    href: '/projects/cliniscribe-ai',
+    headline: 'First voice-to-text physio AI API - manual work cut 40%.',
+    company: 'CliniScribe AI',
+    role: 'Head of Product',
+    years: '2024 – 25',
+    award: false,
+  },
+  {
+    num: '03',
     href: '/projects/strongroom-ai',
+    headline: 'Grew an AI clinical platform 500% in six months.',
+    company: 'StrongRoom AI',
     role: 'Group AI Product Manager',
-    dates: '2023 – 2024',
-    context: 'AI-powered clinical decision support for aged care.',
+    years: '2023 – 24',
     award: true,
-    outcomes: [
-      'Grew the platform 500% in six months — from 80 to 400 businesses.',
-      'Won the Good Design Award (Social Impact) for clinical safety outcomes.',
-      'Led a multi-squad roadmap across US and UK market expansion.',
-    ],
-    differently: 'Invest in self-serve onboarding sooner — growth outpaced our implementation team.',
   },
   {
-    company: 'Webstercare',
-    href: '/projects/webstercare',
-    role: 'Group Product Owner',
-    dates: '2016 – 2022',
-    context: 'Medication management software for aged care, used nationwide.',
+    num: '02',
+    href: '/projects/phoria',
+    headline: 'Took AR and spatial computing to the Australian Museum.',
+    company: 'Phoria',
+    role: 'Group Product Manager',
+    years: '2022 – 23',
     award: false,
-    outcomes: [
-      'Led a legacy platform migration across a national clinical provider network.',
-      'Secured $5M in aged-care contracts and grew platform revenue 10%.',
-      'Owned HIPAA/GDPR compliance for clinical data at scale.',
-    ],
-    differently: 'Push for incremental migration earlier, instead of a big-bang cutover.',
+  },
+  {
+    num: '01',
+    href: '/projects/webstercare',
+    headline: 'Where a pharmacist became a product leader — $5M in contracts.',
+    company: 'Webstercare',
+    role: 'Group Product Owner',
+    years: '2016 – 22',
+    award: false,
   },
 ];
 
-const others = [
-  { company: 'CliniScribe AI', role: 'Head of Product', dates: '2024–25', line: 'Shipped first voice-to-text clinical AI API. Agentic platform cut manual intervention 40%.' },
-  { company: 'Revision3 (SBX)', role: 'Product Manager', dates: '2024–25', line: 'Lifted retention 25% and DAU 30%. Owned Canadian regulatory compliance.' },
-  { company: 'Phoria', role: 'Group Product Manager', dates: '2022–23', line: 'AR & spatial computing. 20% adoption growth; deployed at the Australian Museum.' },
+const facts = [
+  { label: 'Speciality', value: 'Product · Data · AI', hover: 'blue' },
+  { label: 'Background', value: 'Registered pharmacist', hover: 'pink' },
+  { label: 'Location', value: 'Melbourne, AU', hover: 'blue' },
+  { label: 'Experience', value: '8+ years', hover: 'pink' },
+  { label: 'Proof', value: '$1.5M ARR built', hover: 'blue' },
+  { label: 'Availability', value: 'Open to work', hover: 'pink' },
 ];
 
-const toolCols = [
-  { title: "Who it's for", body: 'Hiring teams and fellow PMs who want to see how I actually work — not just read about it.' },
-  { title: 'What it does', body: 'Paste any PM screening question. It drafts structured response options grounded in my real experience.' },
-  { title: 'What to expect', body: 'Two to three tailored angles in seconds. AI drafts the options; my judgment picks and refines.' },
-];
+const careerMarquee =
+  'Pharmacist ✳ Product Leader ✳ Founder ✳ Melbourne ✳ Healthtech ✳ Data ✳ AI ✳ Pharmacist ✳ Product Leader ✳ Founder ✳ Melbourne ✳ Healthtech ✳ Data ✳ AI ✳ ';
 
-function DemoStep({ n, title, sub, active }: { n: string; title: string; sub: string; active: boolean }) {
-  return (
-    <div className="flex items-center gap-3 border-r border-[#e8e1d6] px-6 py-5 last:border-r-0">
-      <span
-        className={`flex h-7 w-7 flex-none items-center justify-center rounded-full text-[13px] font-bold ${
-          active ? 'bg-[#c2410c] text-white' : 'bg-[#e8e1d6] text-[#8a8177]'
-        }`}
-      >
-        {n}
-      </span>
-      <div>
-        <div className="text-sm font-bold text-[#211a13]">{title}</div>
-        <div className="text-xs text-[#8a8177]">{sub}</div>
-      </div>
-    </div>
-  );
-}
-
-function ToolDemo() {
-  const { questionBank, selected, pick, status, drafts, error, generate, currentQuestion } = useScreeningTool();
-  const generating = status === 'loading';
-  const generated = status === 'done';
-
-  return (
-    <div className="mt-8 overflow-hidden rounded-[18px] bg-[#faf7f2] text-[#211a13]">
-      <div className="grid grid-cols-3 border-b border-[#e8e1d6]">
-        <DemoStep n="1" title="Paste a question" sub="Any PM screening prompt" active />
-        <DemoStep n="2" title="AI drafts options" sub="Grounded in real experience" active={generating || generated} />
-        <DemoStep n="3" title="I refine & send" sub="Judgment stays human" active={generated} />
-      </div>
-
-      <div className="p-8">
-        <div className="mb-4 text-xs font-bold uppercase tracking-wide text-[#8a8177]">1 · Pick a screening question</div>
-        <div className="mb-5 flex flex-wrap gap-2.5">
-          {questionBank.map((q, i) => (
-            <button
-              key={q.short}
-              onClick={() => pick(i)}
-              className={`rounded-full border-[1.5px] px-3.5 py-2 text-[13px] font-semibold ${
-                i === selected ? 'border-[#211a13] bg-[#211a13] text-white' : 'border-[#d8d0c3] bg-white text-[#5d554b]'
-              }`}
-            >
-              {q.short}
-            </button>
-          ))}
-        </div>
-        <div className="mb-5 rounded-xl border border-[#e8e1d6] bg-white px-5 py-4 text-base leading-snug text-[#211a13]">
-          {currentQuestion.full}
-        </div>
-
-        <button
-          onClick={generate}
-          className="inline-flex items-center gap-2 rounded-lg bg-[#211a13] px-6 py-3 text-[15px] font-semibold text-[#faf7f2]"
-        >
-          {generated ? 'Regenerate ↻' : 'Generate responses ✨'}
-        </button>
-
-        {generating && (
-          <div className="mt-6 flex items-center gap-3 text-[15px] text-[#8a8177]">
-            <span className="h-[18px] w-[18px] flex-none animate-spin rounded-full border-2 border-[#e8d5c8] border-t-[#c2410c]" />
-            Drafting tailored options from Phil&apos;s real experience…
-          </div>
-        )}
-
-        {status === 'error' && (
-          <div className="mt-6 rounded-lg bg-[#f3ede3] px-4 py-3 text-sm text-[#9a3412]">{error}</div>
-        )}
-
-        {generated && (
-          <div className="mt-7 animate-[srg-in_0.4s_ease]">
-            <div className="mb-4 text-xs font-bold uppercase tracking-wide text-[#8a8177]">
-              2 · Two tailored angles, drafted in seconds
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {drafts.map((d) => (
-                <div key={d.angle} className="rounded-2xl border border-[#e8e1d6] bg-white p-6">
-                  <div className="mb-2.5 text-xs font-bold uppercase tracking-wide text-[#c2410c]">{d.angle}</div>
-                  <div className="text-[15px] leading-relaxed text-[#3d362d]">{d.text}</div>
-                </div>
-              ))}
-            </div>
-            <div className="mt-5 flex items-center gap-2.5 rounded-lg bg-[#f3ede3] px-4.5 py-3.5 text-sm text-[#5d554b]">
-              <span className="font-bold text-[#c2410c]">3 · Then I take over.</span> The AI drafts options fast — I
-              pick the angle, sharpen the wording, and make sure every claim is true before it ever gets sent.
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+const awardMarquee =
+  '🏆 Good Design Award Winner 2024 ✳ 500% growth in 6 months ✳ $5M contracts ✳ $1.5M ARR ✳ 🏆 Good Design Award Winner 2024 ✳ 500% growth in 6 months ✳ $5M contracts ✳ $1.5M ARR ✳ ';
 
 export default function Home() {
-  const [demoOpen, setDemoOpen] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [askError, setAskError] = useState('');
-  const [asking, setAsking] = useState(false);
-
-  const submitAsk = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
-    const question = (form.elements.namedItem('question') as HTMLTextAreaElement).value;
-    setAsking(true);
-    setAskError('');
-    try {
-      const res = await fetch('/api/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, question }),
-      });
-      if (!res.ok) throw new Error('Failed to send — try emailing me directly instead.');
-      setSent(true);
-    } catch (err) {
-      setAskError(err instanceof Error ? err.message : 'Something went wrong');
-    } finally {
-      setAsking(false);
-    }
-  };
-
   return (
-    <div className="bg-[#faf7f2] text-[#211a13]">
-      <div id="about">
-        <WarmNav active="ask" />
-
-        {/* Hero */}
-        <header className="grid gap-12 px-6 py-16 md:grid-cols-[1fr_340px] md:items-center md:px-16 md:py-24">
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 text-[13px] font-semibold uppercase tracking-wide text-[#c2410c]">
-              <span className="h-[1.5px] w-6 bg-[#c2410c]" />
-              Head of Product · Melbourne
-            </div>
-            <h1
-              className="mb-7 text-[44px] font-medium leading-[1.05] tracking-tight text-balance md:text-[76px]"
-              style={serif}
-            >
-              Products that earn trust in regulated markets.
-            </h1>
-            <p className="mb-9 max-w-xl text-lg leading-relaxed text-[#5d554b] md:text-xl">
-              Eight years across healthtech, data platforms and AI.{' '}
-              <br className="hidden md:block" />
-              Pharmacist turned product leader{' '}
-              <br className="hidden md:block" />
-              From clinical software used nationwide to a hospitality fintech startup I&apos;m founding today.
-            </p>
-            <div className="flex flex-wrap items-center gap-4">
-              <a
-                href="#work"
-                className="inline-block rounded-full bg-[#c2410c] px-7 py-3.5 text-[16px] font-semibold text-white"
-              >
-                See my work
-              </a>
-              <a
-                href="#ask"
-                className="inline-block rounded-full border-[1.5px] border-[#d8d0c3] px-7 py-3.5 text-[16px] font-semibold text-[#211a13]"
-              >
-                Ask me anything
-              </a>
-            </div>
-          </div>
-          <div className="flex flex-col items-center gap-6">
-            <Image
-              src="/images/phil-headshot.jpeg"
-              alt="Phil Yuen"
-              width={260}
-              height={260}
-              className="h-[260px] w-[260px] rounded-full border-[6px] border-white object-cover shadow-[0_8px_32px_rgba(40,30,20,0.15)] grayscale"
-            />
-            <div className="flex items-center gap-3.5 rounded-2xl border border-[#e8e1d6] bg-white px-4.5 py-3.5">
-              <Image
-                src="https://sgp1.digitaloceanspaces.com/cdn.yournet.space/wp-content/good-design.org/2018/03/17173832/Good-Design-Award_Winner_RGB_BLK_Logo.png"
-                alt="Good Design Award"
-                width={56}
-                height={56}
-                className="h-14 w-14 flex-none rounded-lg bg-[#f3ede3] object-contain"
-                unoptimized
-              />
-              <div>
-                <div className="text-sm font-bold">Good Design Award</div>
-                <div className="text-[13px] text-[#8a8177]">Winner — Social Impact, 2024</div>
-              </div>
-            </div>
-          </div>
-        </header>
-      </div>
-
-      {/* Stats strip */}
-      <div className="grid grid-cols-2 border-y border-[#e8e1d6] md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="border-r border-[#e8e1d6] px-6 py-7 text-center last:border-r-0">
-            <div className="text-[34px] font-semibold text-[#c2410c]" style={serif}>
-              {s.value}
-            </div>
-            <div className="mt-1 text-[13px] text-[#8a8177]">{s.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Work */}
-      <div id="work" className="px-6 py-16 md:px-16 md:py-20">
-        <h2 className="mb-12 text-[32px] font-medium md:text-[42px]" style={serif}>
-          Work
-        </h2>
-        <div className="flex flex-col gap-6">
-          {jobs.map((job) => (
-            <article
-              key={job.company}
-              className="grid gap-8 rounded-2xl border border-[#e8e1d6] bg-white p-8 md:grid-cols-[200px_1fr] md:p-11"
-            >
-              <div>
-                <div className="text-[13px] font-semibold uppercase tracking-wide text-[#c2410c]">{job.dates}</div>
-                <h3 className="my-2.5 text-2xl font-semibold md:text-[28px]" style={serif}>
-                  <Link href={job.href} className="hover:underline">
-                    {job.company}
-                  </Link>
-                </h3>
-                <div className="text-[15px] leading-tight text-[#5d554b]">{job.role}</div>
-                {job.award && (
-                  <div className="mt-3.5 inline-block rounded-full border-[1.5px] border-[#c2410c] px-3 py-1.5 text-xs font-bold text-[#c2410c]">
-                    🏆 Good Design Award
-                  </div>
-                )}
-              </div>
-              <div>
-                <p className="mb-4.5 text-base italic text-[#5d554b]">{job.context}</p>
-                <ul className="mb-5 flex flex-col gap-2 pl-5 text-base leading-snug">
-                  {job.outcomes.map((o) => (
-                    <li key={o} className="list-disc">
-                      {o}
-                    </li>
-                  ))}
-                </ul>
-                <div className="rounded-lg bg-[#faf7f2] px-4.5 py-3.5 text-[15px] text-[#5d554b]">
-                  <strong className="text-[#c2410c]">What I&apos;d do differently:</strong> {job.differently}
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-
-        <h3 className="mb-5 mt-14 text-2xl font-semibold" style={serif}>
-          Other roles
-        </h3>
-        <div className="grid gap-4 md:grid-cols-3">
-          {others.map((r) => (
-            <div key={r.company} className="rounded-xl border border-[#e8e1d6] p-6">
-              <div className="text-base font-bold">{r.company}</div>
-              <div className="my-1.5 text-[13px] font-semibold text-[#c2410c]">
-                {r.role} · {r.dates}
-              </div>
-              <div className="text-sm leading-snug text-[#5d554b]">{r.line}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tool */}
-      <div className="bg-[#211a13] px-6 py-16 text-[#faf7f2] md:px-16 md:py-20">
-        <div className="mb-4 text-[13px] font-semibold uppercase tracking-wide text-[#e8956d]">A working demo</div>
-        <h2 className="mb-4 max-w-xl text-[32px] font-medium md:text-[42px]" style={serif}>
-          Screening Response Generator
-        </h2>
-        <p className="mb-11 max-w-xl text-lg leading-relaxed text-[#cfc5b8]">
-          I automate repetitive work. This tool is a live example — built to show how I remove toil with AI, not to
-          outsource judgment.
-        </p>
-        <div className="grid gap-5 md:grid-cols-3">
-          {toolCols.map((c) => (
-            <div key={c.title} className="rounded-2xl border border-white/10 bg-white/[0.06] p-7">
-              <div className="mb-3 text-[13px] font-bold uppercase tracking-wide text-[#e8956d]">{c.title}</div>
-              <div className="text-base leading-relaxed text-[#ece5da]">{c.body}</div>
-            </div>
-          ))}
-        </div>
-        <div className="mt-9">
-          <button
-            onClick={() => setDemoOpen((v) => !v)}
-            className="inline-flex items-center gap-2 rounded-full bg-[#c2410c] px-6.5 py-3.5 text-[15px] font-semibold text-white"
+    <div
+      className="min-h-screen bg-white text-[#0a0a0a]"
+      style={{ fontFamily: "var(--font-archivo), 'Helvetica Neue', sans-serif" }}
+    >
+      {/* Nav */}
+      <nav className="sticky top-0 z-20 flex items-center justify-between border-b-2 border-[#0a0a0a] bg-white px-5 py-5 md:px-10">
+        <span className="text-[17px] font-black tracking-[-0.01em]">Phil Yuen ✳</span>
+        <div className="flex items-center gap-5 text-sm font-bold md:gap-[30px]">
+          <a href="#work" className="text-[#0a0a0a] transition-colors hover:text-[#2400ff]">
+            Work
+          </a>
+          <a href="#about" className="text-[#0a0a0a] transition-colors hover:text-[#2400ff]">
+            About
+          </a>
+          <a
+            href="https://github.com/phillipyuen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden text-[#0a0a0a] transition-colors hover:text-[#2400ff] sm:inline"
           >
-            {demoOpen ? 'Hide the demo ↑' : 'Try it — see the flow →'}
-          </button>
+            GitHub
+          </a>
+          <a
+            href="mailto:phillip.yiu.pong.yuen@gmail.com"
+            className="rounded-full bg-[#0a0a0a] px-5 py-[9px] text-white transition-colors hover:bg-[#2400ff]"
+          >
+            Contact
+          </a>
         </div>
+      </nav>
 
-        {demoOpen && <ToolDemo />}
+      {/* Marquee: career arc */}
+      <div className="overflow-hidden border-b-2 border-[#0a0a0a] bg-[#2400ff] py-2.5 text-white">
+        <div className="flex w-max animate-[mq_22s_linear_infinite]">
+          <span className="whitespace-nowrap pr-10 text-[15px] font-extrabold uppercase tracking-[0.14em]">
+            {careerMarquee}
+          </span>
+          <span aria-hidden className="whitespace-nowrap pr-10 text-[15px] font-extrabold uppercase tracking-[0.14em]">
+            {careerMarquee}
+          </span>
+        </div>
       </div>
 
-      {/* AMA */}
-      <div id="ask" className="grid gap-16 px-6 py-16 md:grid-cols-2 md:px-16 md:py-20">
-        <div>
-          <h2 className="mb-4 text-[32px] font-medium md:text-[42px]" style={serif}>
-            Ask me anything
-          </h2>
-          <p className="mb-5 text-lg leading-relaxed text-[#5d554b]">
-            Recruiter, hiring manager, or fellow builder — leave your email and a question. I reply to every one,
-            usually within a day.
-          </p>
-          <p className="text-[15px] text-[#8a8177]">
-            Also open to freelance <strong className="text-[#211a13]">digital strategy</strong> engagements.
-          </p>
+      {/* Statement hero */}
+      <header className="mx-auto max-w-[1160px] animate-[riseUp_0.7s_cubic-bezier(0.22,1,0.36,1)_both] px-5 pb-16 pt-16 md:px-10 md:pb-20 md:pt-24">
+        <h1 className="mb-10 text-[40px] font-extrabold leading-[1.12] tracking-[-0.025em] text-balance md:text-[72px]">
+          <Image
+            src="/images/phil-headshot.jpeg"
+            alt="Phil Yuen"
+            width={76}
+            height={76}
+            className="mr-1.5 inline-block h-12 w-12 rounded-full border-[2.5px] border-[#0a0a0a] object-cover align-[-9px] md:h-[76px] md:w-[76px] md:align-[-14px]"
+            priority
+          />
+          <span>Melbourne-based </span>
+          <span className="font-medium italic" style={serif}>
+            product leader
+          </span>
+          <span> with a </span>
+          <span className="inline-block -rotate-[1.2deg] bg-[#ff4f87] px-3.5 text-white">pharmacist&apos;s</span>
+          <span> eye for safety and a </span>
+          <span className="shadow-[inset_0_-0.22em_#d8f34e]">founder&apos;s itch to ship</span>
+          <span> — real outcomes in </span>
+          <span className="font-medium italic text-[#2400ff]" style={serif}>
+            regulated markets.
+          </span>
+        </h1>
+        <div className="flex flex-wrap items-center gap-3.5">
+          <a
+            href="mailto:phillip.yiu.pong.yuen@gmail.com"
+            className="inline-flex items-center gap-2 rounded-full bg-[#2400ff] px-7 py-3.5 text-base font-extrabold text-white transition-[transform,background-color] duration-150 hover:-translate-y-0.5 hover:bg-[#ff4f87]"
+          >
+            ✉ Ask me anything
+          </a>
+          <a
+            href="https://www.linkedin.com/in/phillipyuen/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-[#0a0a0a] px-[26px] py-3 text-base font-extrabold text-[#0a0a0a] transition-[transform,background-color,color] duration-150 hover:-translate-y-0.5 hover:bg-[#0a0a0a] hover:text-white"
+          >
+            LinkedIn ↗
+          </a>
+          <a
+            href="https://github.com/phillipyuen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full border-2 border-[#0a0a0a] px-[26px] py-3 text-base font-extrabold text-[#0a0a0a] transition-[transform,background-color,color] duration-150 hover:-translate-y-0.5 hover:bg-[#0a0a0a] hover:text-white"
+          >
+            GitHub ↗
+          </a>
+          <span className="ml-1.5 text-sm font-semibold text-[#555]">Open to work + freelance digital strategy</span>
         </div>
-        {sent ? (
-          <div className="rounded-2xl border border-[#e8e1d6] bg-white p-12 text-center text-lg" style={serif}>
-            Thanks — I&apos;ll be in touch soon. ✓
-          </div>
-        ) : (
-          <form onSubmit={submitAsk} className="flex flex-col gap-3.5 rounded-2xl border border-[#e8e1d6] bg-white p-8">
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="you@company.com"
-              className="rounded-lg border border-[#d8d0c3] bg-[#faf7f2] px-4 py-3.5 text-[15px] text-[#211a13] outline-none"
-            />
-            <textarea
-              name="question"
-              required
-              placeholder="Your question — role, experience, availability, anything"
-              rows={3}
-              className="resize-y rounded-lg border border-[#d8d0c3] bg-[#faf7f2] px-4 py-3.5 text-[15px] text-[#211a13] outline-none"
-            />
-            {askError && <div className="text-sm text-[#9a3412]">{askError}</div>}
-            <button
-              type="submit"
-              disabled={asking}
-              className="rounded-lg bg-[#c2410c] py-3.5 text-[16px] font-semibold text-white disabled:opacity-60"
+      </header>
+
+      {/* Work index */}
+      <section id="work" className="mx-auto max-w-[1160px] px-5 pb-10 md:px-10">
+        <div className="mb-2 flex items-baseline justify-between">
+          <h2 className="m-0 text-[15px] font-extrabold uppercase tracking-[0.14em]">Work — 7 chapters</h2>
+          <span className="text-sm font-semibold text-[#555]">click a row for the full story</span>
+        </div>
+
+        <div className="border-t-2 border-[#0a0a0a]">
+          {works.map((w) => (
+            <Link
+              key={w.num}
+              href={w.href}
+              className="group grid grid-cols-[48px_1fr_auto] items-center gap-4 border-b-2 border-[#0a0a0a] py-6 pl-3 pr-3 text-[#0a0a0a] transition-[background-color,color,padding-left] duration-[180ms] hover:bg-[#2400ff] hover:pl-7 hover:text-white md:grid-cols-[84px_1fr_auto] md:gap-6 md:py-[30px]"
             >
-              {asking ? 'Sending…' : 'Send question'}
-            </button>
-          </form>
-        )}
+              <span className="font-mono text-[15px] font-bold text-[#ff4f87]">{w.num}</span>
+              <span>
+                <span className="block text-[22px] font-extrabold leading-[1.15] tracking-[-0.015em] text-inherit md:text-[30px]">
+                  {w.headline}
+                </span>
+                <span className="mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 text-sm font-semibold text-inherit opacity-[0.62]">
+                  <span>{w.company}</span>
+                  <span>·</span>
+                  <span>{w.role}</span>
+                  <span>·</span>
+                  <span>{w.years}</span>
+                  {w.award && <span className="font-extrabold text-[#ff4f87] opacity-100">🏆 Good Design Award</span>}
+                </span>
+              </span>
+              <span className="text-[22px] font-extrabold text-inherit md:text-[30px]">↗</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Award marquee */}
+      <div className="my-12 rotate-[-1deg] scale-[1.02] overflow-hidden border-y-2 border-[#0a0a0a] bg-[#ff4f87] py-3 text-white">
+        <div className="flex w-max animate-[mq_26s_linear_infinite_reverse]">
+          <span className="whitespace-nowrap pr-10 text-base font-black uppercase tracking-[0.12em]">
+            {awardMarquee}
+          </span>
+          <span aria-hidden className="whitespace-nowrap pr-10 text-base font-black uppercase tracking-[0.12em]">
+            {awardMarquee}
+          </span>
+        </div>
       </div>
 
-      {/* Footer */}
-      <footer className="flex flex-col gap-3 border-t border-[#e8e1d6] px-6 py-7 text-sm text-[#8a8177] md:flex-row md:items-center md:justify-between md:px-16">
-        <span>Phil Yuen · Senior Product Manager · Melbourne, VIC</span>
+      {/* About fact grid */}
+      <section id="about" className="mx-auto max-w-[1160px] px-5 pb-[88px] pt-10 md:px-10">
+        <h2 className="mb-5 mt-0 text-[15px] font-extrabold uppercase tracking-[0.14em]">A bit about me</h2>
+        <div className="grid grid-cols-1 overflow-hidden border-2 border-[#0a0a0a] sm:grid-cols-2 lg:grid-cols-3">
+          {facts.map((f) => (
+            <div
+              key={f.label}
+              className={`-mb-0.5 -mr-0.5 border-b-2 border-r-2 border-[#0a0a0a] px-7 py-[30px] transition-[background-color,color] duration-[180ms] hover:text-white ${
+                f.hover === 'blue' ? 'hover:bg-[#2400ff]' : 'hover:bg-[#ff4f87]'
+              }`}
+            >
+              <div className="font-mono text-xs font-bold uppercase tracking-[0.1em] opacity-55">{f.label}</div>
+              <div className="mt-2 text-[24px] font-extrabold tracking-[-0.015em] md:text-[30px]">{f.value}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* GitHub band */}
+      <div className="bg-[#0a0a0a] px-5 py-[72px] text-white md:px-10">
+        <div className="mx-auto flex max-w-[1160px] flex-wrap items-center justify-between gap-10">
+          <div className="max-w-[640px]">
+            <h3 className="mb-2.5 mt-0 text-[30px] font-extrabold tracking-[-0.02em] md:text-[40px]">
+              I don&apos;t just spec it —{' '}
+              <span className="font-medium italic text-[#d8f34e]" style={serif}>
+                I ship it.
+              </span>
+            </h3>
+            <p className="m-0 text-[17px] leading-[1.6] text-white/65">
+              Working prototypes and tools I&apos;ve coded myself, including projects built with the Claude API.
+            </p>
+          </div>
+          <a
+            href="https://github.com/phillipyuen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2.5 rounded-full bg-[#d8f34e] px-8 py-4 text-base font-black text-[#0a0a0a] transition-[transform,background-color] duration-150 hover:-translate-y-0.5 hover:bg-white"
+          >
+            See my code on GitHub ↗
+          </a>
+        </div>
+      </div>
+
+      {/* Giant contact */}
+      <section className="border-b-2 border-[#0a0a0a] px-5 pb-20 pt-[100px] md:px-10">
+        <div className="mx-auto max-w-[1160px]">
+          <div className="mb-3 font-mono text-sm font-bold uppercase tracking-[0.12em] text-[#555]">
+            Recruiter, hiring manager, fellow builder —
+          </div>
+          <a
+            href="mailto:phillip.yiu.pong.yuen@gmail.com"
+            className="block text-[clamp(48px,11vw,118px)] font-black leading-[0.95] tracking-[-0.04em] text-[#0a0a0a] transition-[color,letter-spacing] duration-[180ms] hover:tracking-[-0.02em] hover:text-[#ff4f87]"
+          >
+            ASK ME
+            <br />
+            ANYTHING ↗
+          </a>
+          <div className="mt-8 flex flex-wrap items-center gap-6">
+            <span className="font-mono text-sm font-semibold md:text-base">
+              M&nbsp; phillip.yiu.pong.yuen@gmail.com
+            </span>
+            <span className="text-sm text-[#555]">opens in your own mail client · replies within a day</span>
+          </div>
+        </div>
+      </section>
+
+      <footer className="flex flex-col gap-3 px-5 py-6 text-sm font-semibold text-[#555] md:flex-row md:justify-between md:px-10">
+        <span>© 2026 Phil Yuen · Melbourne, VIC</span>
         <div className="flex gap-6">
-          <a href="mailto:phillip.yiu.pong.yuen@gmail.com" className="hover:text-[#211a13]">
+          <a href="mailto:phillip.yiu.pong.yuen@gmail.com" className="text-[#555] transition-colors hover:text-[#2400ff]">
             Email
           </a>
           <a
-            href="https://linkedin.com/in/phillipyuen"
+            href="https://www.linkedin.com/in/phillipyuen/"
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-[#211a13]"
+            className="text-[#555] transition-colors hover:text-[#2400ff]"
           >
             LinkedIn
+          </a>
+          <a
+            href="https://github.com/phillipyuen"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#555] transition-colors hover:text-[#2400ff]"
+          >
+            GitHub
           </a>
         </div>
       </footer>
