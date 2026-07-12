@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Archivo, Newsreader } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 const newsreader = Newsreader({
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body className={`antialiased ${newsreader.variable} ${archivo.variable}`}>
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
