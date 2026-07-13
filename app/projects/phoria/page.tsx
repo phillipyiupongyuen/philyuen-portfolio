@@ -15,6 +15,10 @@ export default function PhoriaPage() {
       role="Group Product Manager"
       intro="AR and spatial computing — from clinical software to entirely new mediums."
       heroLabel="hero — AR experience photo"
+      heroImage={{
+        src: '/images/projects/phoria-hero.png',
+        alt: 'Phoria — immersive transformations',
+      }}
       bullets={[
         'Drove 20% adoption growth across AR and spatial computing products.',
         'Deployed immersive experiences at the Australian Museum.',

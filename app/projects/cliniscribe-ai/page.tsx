@@ -16,6 +16,10 @@ export default function CliniScribePage() {
       role="Head of Product"
       intro="Voice-to-text clinical AI — back to healthtech, this time at the head of the product function."
       heroLabel="hero — product screenshot"
+      heroImage={{
+        src: '/images/projects/cliniscribe-hero.png',
+        alt: 'CliniScribe — AI scribe for allied health',
+      }}
       bullets={[
         "Shipped the company's first voice-to-text clinical AI API.",
         'Built an agentic platform that cut manual intervention 40%.',

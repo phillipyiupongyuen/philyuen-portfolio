@@ -14,6 +14,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Prevent decorative full-width elements (rotated marquees etc.) from
+   causing horizontal scroll on small screens */
+html,
+body {
+  overflow-x: clip;
+}
+
 @keyframes mq {
   to {
     transform: translateX(-50%);

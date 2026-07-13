@@ -91,9 +91,28 @@ export default function Home() {
       style={{ fontFamily: "var(--font-archivo), 'Helvetica Neue', sans-serif" }}
     >
       {/* Nav */}
-      <nav className="sticky top-0 z-20 flex items-center justify-between border-b-2 border-[#0a0a0a] bg-white px-5 py-5 md:px-10">
-        <span className="text-[17px] font-black tracking-[-0.01em]">Phil Yuen ✳</span>
-        <div className="flex items-center gap-5 text-sm font-bold md:gap-[30px]">
+      <nav className="sticky top-0 z-20 flex items-center justify-between gap-2 border-b-2 border-[#0a0a0a] bg-white px-4 py-4 md:px-10 md:py-5">
+        <div className="flex items-center gap-2 md:gap-4">
+          <span className="whitespace-nowrap text-[15px] font-black tracking-[-0.01em] md:text-[17px]">
+            Phil Yuen ✳
+          </span>
+          <a
+            href="https://good-design.org/projects/strongpro-ai-empowering-healthcare-heroes-for-healthier-communities/"
+            target="_blank"
+            rel="noopener noreferrer"
+            title="Good Design Award — Social Impact, 2024"
+            className="shrink-0 transition-opacity hover:opacity-70"
+          >
+            <Image
+              src="/images/projects/good-design-award-badge.png"
+              alt="Good Design Award Winner — Social Impact, 2024"
+              width={552}
+              height={231}
+              className="h-5 w-auto md:h-7"
+            />
+          </a>
+        </div>
+        <div className="flex items-center gap-3 text-sm font-bold md:gap-[30px]">
           <a href="#work" className="text-[#0a0a0a] transition-colors hover:text-[#2400ff]">
             Work
           </a>
@@ -101,7 +120,7 @@ export default function Home() {
             About
           </a>
           <a
-            href="https://github.com/phillipyuen"
+            href="https://github.com/phillipyiupongyuen"
             target="_blank"
             rel="noopener noreferrer"
             className="hidden text-[#0a0a0a] transition-colors hover:text-[#2400ff] sm:inline"
@@ -110,7 +129,7 @@ export default function Home() {
           </a>
           <a
             href="mailto:phillip.yiu.pong.yuen@gmail.com"
-            className="rounded-full bg-[#0a0a0a] px-5 py-[9px] text-white transition-colors hover:bg-[#2400ff]"
+            className="rounded-full bg-[#0a0a0a] px-4 py-2 text-white transition-colors hover:bg-[#2400ff] md:px-5 md:py-[9px]"
           >
             Contact
           </a>
@@ -169,7 +188,7 @@ export default function Home() {
             LinkedIn ↗
           </a>
           <a
-            href="https://github.com/phillipyuen"
+            href="https://github.com/phillipyiupongyuen"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full border-2 border-[#0a0a0a] px-[26px] py-3 text-base font-extrabold text-[#0a0a0a] transition-[transform,background-color,color] duration-150 hover:-translate-y-0.5 hover:bg-[#0a0a0a] hover:text-white"
@@ -259,7 +278,7 @@ export default function Home() {
             </p>
           </div>
           <a
-            href="https://github.com/phillipyuen"
+            href="https://github.com/phillipyiupongyuen"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2.5 rounded-full bg-[#d8f34e] px-8 py-4 text-base font-black text-[#0a0a0a] transition-[transform,background-color] duration-150 hover:-translate-y-0.5 hover:bg-white"
@@ -307,7 +326,7 @@ export default function Home() {
             LinkedIn
           </a>
           <a
-            href="https://github.com/phillipyuen"
+            href="https://github.com/phillipyiupongyuen"
             target="_blank"
             rel="noopener noreferrer"
             className="text-[#555] transition-colors hover:text-[#2400ff]"

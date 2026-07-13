@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 
 export interface ChapterCard {
@@ -6,23 +7,48 @@ export interface ChapterCard {
   title: string;
 }
 
+export interface SlotImage {
+  src: string;
+  alt: string;
+}
+
 export interface ChapterProps {
   num: number;
   years: string;
   title: string;
   role: string;
   award?: string;
+  awardHref?: string;
   intro: string;
   heroLabel: string;
+  heroImage?: SlotImage;
   didTitle?: string;
   bullets: string[];
   differently?: string;
   artifactLabels: [string, string];
+  artifactImages?: [SlotImage | null, SlotImage | null];
   prev: ChapterCard;
   next: ChapterCard & { mailto?: boolean };
 }
 
-function ImageSlot({ label, tall }: { label: string; tall?: boolean }) {
+function ImageSlot({ label, image, tall }: { label: string; image?: SlotImage | null; tall?: boolean }) {
+  if (image) {
+    return (
+      <div
+        className={`relative w-full overflow-hidden rounded-xl bg-[#f0efec] ${
+          tall ? 'h-[220px] rounded-[14px] md:h-[320px]' : 'h-[200px]'
+        }`}
+      >
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          sizes={tall ? '(max-width: 908px) 100vw, 860px' : '(max-width: 640px) 100vw, 430px'}
+          className="object-cover"
+        />
+      </div>
+    );
+  }
   return (
     <div
       className={`flex w-full items-center justify-center rounded-xl bg-[#f0efec] px-6 text-center ${
@@ -43,12 +69,15 @@ export default function ChapterLayout({
   title,
   role,
   award,
+  awardHref,
   intro,
   heroLabel,
+  heroImage,
   didTitle = 'What I did',
   bullets,
   differently,
   artifactLabels,
+  artifactImages,
   prev,
   next,
 }: ChapterProps) {
@@ -61,7 +90,7 @@ export default function ChapterLayout({
         <Link href="/" className="text-lg font-extrabold text-[#0a0a0a]">
           Phil Yuen
         </Link>
-        <div className="flex items-center gap-8 text-sm font-semibold">
+        <div className="flex items-center gap-4 text-sm font-semibold md:gap-8">
           <Link href="/#work" className="text-[#0a0a0a] transition-colors hover:text-[#2400ff]">
             ← All chapters
           </Link>
@@ -91,14 +120,24 @@ export default function ChapterLayout({
 
         <h1 className="mb-2 text-[38px] font-extrabold leading-[1.02] tracking-[-0.02em] md:text-[56px]">{title}</h1>
         <div className={`text-lg font-bold text-[#2400ff] ${award ? 'mb-3.5' : 'mb-5'}`}>{role}</div>
-        {award && (
-          <div className="mb-5 inline-block rounded-full bg-[#ff4f87] px-4 py-[7px] text-[13px] font-extrabold tracking-[0.05em] text-white">
-            {award}
-          </div>
-        )}
+        {award &&
+          (awardHref ? (
+            <a
+              href={awardHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mb-5 inline-block rounded-full bg-[#ff4f87] px-4 py-[7px] text-[13px] font-extrabold tracking-[0.05em] text-white transition-colors hover:bg-[#2400ff]"
+            >
+              {award} ↗
+            </a>
+          ) : (
+            <div className="mb-5 inline-block rounded-full bg-[#ff4f87] px-4 py-[7px] text-[13px] font-extrabold tracking-[0.05em] text-white">
+              {award}
+            </div>
+          ))}
         <p className="mb-9 max-w-[640px] text-[19px] italic leading-[1.6] text-[#555] text-pretty">{intro}</p>
 
-        <ImageSlot label={heroLabel} tall />
+        <ImageSlot label={heroLabel} image={heroImage} tall />
 
         <h2 className="mb-[18px] mt-11 text-[26px] font-extrabold">{didTitle}</h2>
         <div className="flex flex-col gap-3">
@@ -120,8 +159,8 @@ export default function ChapterLayout({
         )}
 
         <div className="mt-8 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-          <ImageSlot label={artifactLabels[0]} />
-          <ImageSlot label={artifactLabels[1]} />
+          <ImageSlot label={artifactLabels[0]} image={artifactImages?.[0]} />
+          <ImageSlot label={artifactLabels[1]} image={artifactImages?.[1]} />
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
@@ -165,7 +204,7 @@ export default function ChapterLayout({
             LinkedIn
           </a>
           <a
-            href="https://github.com/phillipyuen"
+            href="https://github.com/phillipyiupongyuen"
             target="_blank"
             rel="noopener noreferrer"
             className="text-white hover:text-[#d8f34e]"

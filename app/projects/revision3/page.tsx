@@ -15,6 +15,10 @@ export default function Revision3Page() {
       role="Product Manager"
       intro="Growth and compliance for the Canadian market."
       heroLabel="hero — product screenshot"
+      heroImage={{
+        src: '/images/projects/sbx-hero.png',
+        alt: 'SBX.com',
+      }}
       bullets={['Lifted retention 25% and daily active users 30%.', 'Owned Canadian regulatory compliance.']}
       artifactLabels={['artifact', 'artifact']}
       prev={{ href: '/projects/cliniscribe-ai', kicker: '← Chapter 4 · 2024–25', title: 'CliniScribe AI' }}

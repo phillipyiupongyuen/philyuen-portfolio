@@ -16,6 +16,10 @@ export default function WebstercarePage() {
       role="Group Product Owner"
       intro="Where a registered pharmacist became a product leader. Medication management software for aged care, used nationwide."
       heroLabel="hero — product screenshot or team photo"
+      heroImage={{
+        src: '/images/projects/webstercare-software.webp',
+        alt: 'Webstercare medication management software',
+      }}
       bullets={[
         'Led a legacy platform migration across a national clinical provider network.',
         'Secured $5M in aged-care contracts and grew platform revenue 10%.',
@@ -23,6 +27,16 @@ export default function WebstercarePage() {
       ]}
       differently="Push for incremental migration earlier, instead of a big-bang cutover."
       artifactLabels={['artifact', 'artifact']}
+      artifactImages={[
+        {
+          src: '/images/projects/webstercare-pak.webp',
+          alt: 'Webster-pak medication packs',
+        },
+        {
+          src: '/images/projects/webstercare-scanning.webp',
+          alt: 'Webster-pak barcode scanning',
+        },
+      ]}
       prev={{ href: '/#work', kicker: '← Start', title: 'Back to the timeline' }}
       next={{ href: '/projects/phoria', kicker: 'Chapter 2 · 2022–23 →', title: 'Phoria' }}
     />

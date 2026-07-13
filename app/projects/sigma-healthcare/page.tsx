@@ -15,6 +15,10 @@ export default function SigmaPage() {
       role="Senior Data Platform Product Manager"
       intro="National pharmacy wholesaler modernising its data estate."
       heroLabel="hero — platform / dashboard screenshot"
+      heroImage={{
+        src: '/images/projects/sigma-hero.png',
+        alt: 'Sigma Healthcare — retail pharmacy franchisor and pharmaceutical wholesaler',
+      }}
       bullets={[
         'Shipped a national Snowflake platform — Medallion architecture with dbt, Fivetran and Airflow.',
         'Owned the roadmap across Commercial, Finance and Supply Chain domains.',
@@ -22,6 +26,7 @@ export default function SigmaPage() {
       ]}
       differently="Bring business domain owners into the data modelling process earlier."
       artifactLabels={['architecture diagram', 'roadmap artifact']}
+      artifactImages={[{ src: '/images/projects/sigma-backdrop.jpg', alt: 'Sigma Healthcare brand' }, null]}
       prev={{ href: '/projects/revision3', kicker: '← Chapter 5 · 2024–25', title: 'Revision3 (SBX)' }}
       next={{ href: '/projects/countfor-me', kicker: 'Chapter 7 · 2026 →', title: 'countfor.me' }}
     />

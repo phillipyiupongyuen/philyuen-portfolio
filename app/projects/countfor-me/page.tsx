@@ -15,6 +15,10 @@ export default function CountForMePage() {
       role="Co-Founder & Product Lead"
       intro="The current chapter: founding a hospitality fintech for the Japanese market."
       heroLabel="hero — product screenshot"
+      heroImage={{
+        src: '/images/projects/countfor-me-hero.png',
+        alt: 'countfor.me — hospitality fintech for the Australian and Japanese markets',
+      }}
       didTitle="What I'm doing"
       bullets={[
         'Own end-to-end product and commercial strategy for market entry.',
