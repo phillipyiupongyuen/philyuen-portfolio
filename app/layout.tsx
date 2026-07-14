@@ -42,16 +42,21 @@ export const metadata: Metadata = {
   },
 };
 
+// Runs before paint: applies the stored theme, or the system preference when
+// none is stored, so there is no light/dark flash on load.
+const themeInitScript = `(function(){try{var t=localStorage.theme;var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body className={`antialiased ${newsreader.variable} ${archivo.variable}`}>
         {children}

@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import ThemeToggle from './ThemeToggle';
 
 export interface ChapterCard {
   href: string;
@@ -35,7 +36,7 @@ function ImageSlot({ label, image, tall }: { label: string; image?: SlotImage | 
   if (image) {
     return (
       <div
-        className={`relative w-full overflow-hidden rounded-xl bg-[#f0efec] ${
+        className={`relative w-full overflow-hidden rounded-xl bg-[#f0efec] dark:bg-[#23221f] ${
           tall ? 'h-[220px] rounded-[14px] md:h-[320px]' : 'h-[200px]'
         }`}
       >
@@ -51,17 +52,17 @@ function ImageSlot({ label, image, tall }: { label: string; image?: SlotImage | 
   }
   return (
     <div
-      className={`flex w-full items-center justify-center rounded-xl bg-[#f0efec] px-6 text-center ${
+      className={`flex w-full items-center justify-center rounded-xl bg-[#f0efec] dark:bg-[#23221f] px-6 text-center ${
         tall ? 'h-[220px] rounded-[14px] md:h-[320px]' : 'h-[200px]'
       }`}
     >
-      <span className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-[#a5a29b]">{label}</span>
+      <span className="font-mono text-xs font-semibold uppercase tracking-[0.08em] text-[#a5a29b] dark:text-[#6f6c64]">{label}</span>
     </div>
   );
 }
 
 const cardHover =
-  'block rounded-xl border-[1.5px] border-[#0a0a0a] bg-white p-[18px] px-[22px] transition-[border-color,box-shadow] duration-150 hover:border-[#ff4f87] hover:shadow-[4px_4px_0_#ff4f87]';
+  'block rounded-xl border-[1.5px] border-[#0a0a0a] dark:border-[#f4f2ec] bg-white dark:bg-[#1a1918] p-[18px] px-[22px] transition-[border-color,box-shadow] duration-150 hover:border-[#ff4f87] hover:shadow-[4px_4px_0_#ff4f87]';
 
 export default function ChapterLayout({
   num,
@@ -83,23 +84,24 @@ export default function ChapterLayout({
 }: ChapterProps) {
   return (
     <div
-      className="flex min-h-screen flex-col bg-white text-[#0a0a0a]"
+      className="flex min-h-screen flex-col bg-white dark:bg-[#121210] text-[#0a0a0a] dark:text-[#f4f2ec]"
       style={{ fontFamily: "var(--font-archivo), 'Helvetica Neue', sans-serif" }}
     >
-      <nav className="flex items-center justify-between border-b-2 border-[#0a0a0a] px-6 py-[22px] md:px-12">
-        <Link href="/" className="text-lg font-extrabold text-[#0a0a0a]">
+      <nav className="flex items-center justify-between border-b-2 border-[#0a0a0a] dark:border-[#f4f2ec] px-6 py-[22px] md:px-12">
+        <Link href="/" className="text-lg font-extrabold text-[#0a0a0a] dark:text-[#f4f2ec]">
           Phil Yuen
         </Link>
         <div className="flex items-center gap-4 text-sm font-semibold md:gap-8">
-          <Link href="/#work" className="text-[#0a0a0a] transition-colors hover:text-[#2400ff]">
+          <Link href="/#work" className="text-[#0a0a0a] dark:text-[#f4f2ec] transition-colors hover:text-[#2400ff] dark:hover:text-[#9d8bff]">
             ← All chapters
           </Link>
           <a
             href="mailto:phillip.yiu.pong.yuen@gmail.com"
-            className="text-[#0a0a0a] transition-colors hover:text-[#2400ff]"
+            className="text-[#0a0a0a] dark:text-[#f4f2ec] transition-colors hover:text-[#2400ff] dark:hover:text-[#9d8bff]"
           >
             Contact
           </a>
+          <ThemeToggle className="text-[#0a0a0a] hover:text-[#2400ff] dark:text-[#f4f2ec] dark:hover:text-[#9d8bff]" />
         </div>
       </nav>
 
@@ -112,14 +114,14 @@ export default function ChapterLayout({
             <div
               key={i}
               className={`h-1.5 flex-1 rounded-[3px] ${
-                i + 1 === num ? 'bg-[#ff4f87]' : i + 1 < num ? 'bg-[#0a0a0a]' : 'bg-[#e4e2dd]'
+                i + 1 === num ? 'bg-[#ff4f87]' : i + 1 < num ? 'bg-[#0a0a0a] dark:bg-[#f4f2ec]' : 'bg-[#e4e2dd] dark:bg-[#2a2926]'
               }`}
             />
           ))}
         </div>
 
         <h1 className="mb-2 text-[38px] font-extrabold leading-[1.02] tracking-[-0.02em] md:text-[56px]">{title}</h1>
-        <div className={`text-lg font-bold text-[#2400ff] ${award ? 'mb-3.5' : 'mb-5'}`}>{role}</div>
+        <div className={`text-lg font-bold text-[#2400ff] dark:text-[#9d8bff] ${award ? 'mb-3.5' : 'mb-5'}`}>{role}</div>
         {award &&
           (awardHref ? (
             <a
@@ -135,7 +137,7 @@ export default function ChapterLayout({
               {award}
             </div>
           ))}
-        <p className="mb-9 max-w-[640px] text-[19px] italic leading-[1.6] text-[#555] text-pretty">{intro}</p>
+        <p className="mb-9 max-w-[640px] text-[19px] italic leading-[1.6] text-[#555] dark:text-[#b3afa6] text-pretty">{intro}</p>
 
         <ImageSlot label={heroLabel} image={heroImage} tall />
 
@@ -150,7 +152,7 @@ export default function ChapterLayout({
         </div>
 
         {differently && (
-          <div className="mt-8 rounded-xl border-[1.5px] border-[#0a0a0a] bg-white px-6 py-5">
+          <div className="mt-8 rounded-xl border-[1.5px] border-[#0a0a0a] dark:border-[#f4f2ec] bg-white dark:bg-[#1a1918] px-6 py-5">
             <div className="mb-1.5 text-xs font-extrabold uppercase tracking-[0.1em] text-[#ff4f87]">
               What I&apos;d do differently
             </div>
@@ -164,7 +166,7 @@ export default function ChapterLayout({
         </div>
 
         <div className="mt-14 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
-          <Link href={prev.href} className={`${cardHover} text-[#0a0a0a]`}>
+          <Link href={prev.href} className={`${cardHover} text-[#0a0a0a] dark:text-[#f4f2ec]`}>
             <div className="mb-1 text-xs font-extrabold uppercase tracking-[0.08em] text-[#ff4f87]">{prev.kicker}</div>
             <div className="text-lg font-extrabold">{prev.title}</div>
           </Link>
@@ -179,7 +181,7 @@ export default function ChapterLayout({
               <div className="text-lg font-extrabold">{next.title}</div>
             </a>
           ) : (
-            <Link href={next.href} className={`${cardHover} text-right text-[#0a0a0a]`}>
+            <Link href={next.href} className={`${cardHover} text-right text-[#0a0a0a] dark:text-[#f4f2ec]`}>
               <div className="mb-1 text-xs font-extrabold uppercase tracking-[0.08em] text-[#ff4f87]">
                 {next.kicker}
               </div>
